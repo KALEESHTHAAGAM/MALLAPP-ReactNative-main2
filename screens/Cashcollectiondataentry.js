@@ -61,7 +61,7 @@ export default function Cashcollection({ navigation }) {
     };
     //api to post 
    //handle Data
-   axios.post('https://bf33-115-96-6-60.ngrok-free.app/handle_data_cash/', JSON.stringify(data),
+   axios.post('https://f02a-115-96-6-60.ngrok-free.app/handle_data_cash/', JSON.stringify(data),
      {
       method: 'POST',
       headers: {

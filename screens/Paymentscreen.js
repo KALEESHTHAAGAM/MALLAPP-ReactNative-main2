@@ -32,6 +32,7 @@ const Paymentscreen=({ route })=>
     status: 'Pending', // You can update this based on the payment status
   });
   const [hasEnteredPage, setHasEnteredPage] = useState(false);
+  
 
   //modal open
   const [visible, setVisible] = React.useState(false);
@@ -118,6 +119,7 @@ const Paymentscreen=({ route })=>
     } catch (error) {
       console.error('Error creating Razorpay order:', error);
     }}
+
   const handleShowcontainer = () => {
     showModal1();
      // Call handlePayment when the button is clicked
@@ -257,7 +259,6 @@ const Paymentscreen=({ route })=>
           optionalFunc={() => console.log('optional')}
         />
       </SafeAreaView>
-    
       <Portal style={styles.container}>
         <Modal visible={visible} onDismiss={hideModal} style={styles.modalContainer} contentContainerStyle={containerStyle}>
         <Text style={styles.upiIdText}>QR Code Valid for: {formattedValidityTime}</Text>

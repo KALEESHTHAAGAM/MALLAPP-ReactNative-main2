@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Switch, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons'; // Import icons library
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SettingsItem = ({ label, value, onToggle }) => (
   <View style={styles.settingItem}>
@@ -14,6 +15,7 @@ const SettingsScreen = () => {
   const [fingerprintEnabled, setFingerprintEnabled] = useState(false);
   const [usePassword, setUsePassword] = useState(false);
   const [theme, setTheme] = useState('light'); // 'light' or 'dark'
+  
 
   const toggleNotification = () => setNotificationEnabled(!notificationEnabled);
   const toggleFingerprint = () => setFingerprintEnabled(!fingerprintEnabled);
@@ -33,6 +35,7 @@ const SettingsScreen = () => {
   };
 
   return (
+    <SafeAreaView>
     <View style={styles.container}>
       <Text style={styles.header}>Settings</Text>
 
@@ -61,8 +64,10 @@ const SettingsScreen = () => {
         <TouchableOpacity style={styles.button} onPress={handleFingerprintAuthentication}>
           <Text>Authenticate with Fingerprint</Text>
         </TouchableOpacity>
+      
       )}
     </View>
+    </SafeAreaView>
   );
 };
 

@@ -9,6 +9,7 @@ import { Center, ScrollView } from 'native-base';
 import SaveComponent from '../components/SaveComponent';
 import * as Sharing from 'expo-sharing';
 import { useNavigation } from '@react-navigation/native';
+import { useUser } from "../components/UserContext";
 
 
 
@@ -32,7 +33,7 @@ export default function PreviewScreen({ route }) {
 const today = new Date();
 const [Date_of_Donation, setDate_Of_Donation] = useState(today);
 
-
+ const { userData, setUserData } = useUser();
   const { name, nameOnParcel, mobileNumber,selectedCategory, count, enteredAmount, nameOfrm  } = route.params;
   const [isActionsheetVisible, setActionsheetVisible] = useState(false);
   const navigation = useNavigation();
@@ -43,7 +44,7 @@ const [Date_of_Donation, setDate_Of_Donation] = useState(today);
 
   const shareData = async () => {
     try {
-      const message = `Name: ${name}\nName On Parcel: ${nameOnParcel}\nMobile Number: ${mobileNumber}\nCategory: ${selectedCategory}\nCount: ${count}\nAmount: ${enteredAmount}\nName Of Rm: ${nameOfrm}\nDate of Donation: ${Date_of_Donation}`;
+      const message = `Name: ${name}\nName On Parcel: ${nameOnParcel}\nMobile Number: ${mobileNumber}\nCategory: ${selectedCategory}\nCount: ${count}\nAmount: ${enteredAmount}\nName Of Rm: ${nameOfrm}\nDate of Donation: ${Date_of_Donation}\nDate of Service: ${Date_of_Donation}`;
   
       const options = {
         title: 'Share via',
@@ -58,7 +59,6 @@ const [Date_of_Donation, setDate_Of_Donation] = useState(today);
     }
   };
   
-
   return (
     <SafeAreaView>
     <ScrollView>
@@ -106,10 +106,16 @@ const [Date_of_Donation, setDate_Of_Donation] = useState(today);
           </View>
           <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Name Of Rm:</Text>
-          <Text style={styles.detailValue}>{nameOfrm}</Text>
+          <Text style={styles.detailValue}>{userData.name}</Text>
           </View>
           <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Date of Donation:</Text>
+          <Text style={styles.detailValue}>
+              {Date_of_Donation.toISOString().split('T')[0]}
+            </Text>
+          </View>
+          <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Date of Service:</Text>
           <Text style={styles.detailValue}>
               {Date_of_Donation.toISOString().split('T')[0]}
             </Text>

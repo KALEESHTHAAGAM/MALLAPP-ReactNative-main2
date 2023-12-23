@@ -5,7 +5,16 @@ import axios from 'axios';
 
 
 const DonorListScreen = () => {
-
+  const fetchDonarList = async () => {
+    try {
+        const response = await axios.get('https://f02a-115-96-6-60.ngrok-free.app/donar_data/');
+        setDonarDetails(response.data.donor_data);
+    } catch (error) {
+        console.error('Error fetching donor data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const [donar_data, setDonarDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -18,16 +27,7 @@ const DonorListScreen = () => {
   useEffect(() => {
     fetchDonarList();
 }, []);
-const fetchDonarList = async () => {
-  try {
-      const response = await axios.get('https://d659-115-96-6-60.ngrok-free.app/donar_data/');
-      setDonarDetails(response.data.donor_data);
-  } catch (error) {
-      console.error('Error fetching donor data:', error);
-  } finally {
-    setLoading(false);
-  }
-};
+
 const itemsPerPage = 5;
 const [currentPage, setCurrentPage] = useState(1);
 const totalPages = Math.ceil(donar_data.length / itemsPerPage);

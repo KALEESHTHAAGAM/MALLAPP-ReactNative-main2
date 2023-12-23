@@ -15,6 +15,7 @@ export default function App() {
 
   return (
     <NativeBaseProvider>
+      
       <UserProvider>
         <NavigationContainer>
         <StatusBar style="dark" />

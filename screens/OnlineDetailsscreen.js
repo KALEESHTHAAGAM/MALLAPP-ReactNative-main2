@@ -13,7 +13,7 @@ import * as ImagePicker from 'expo-image-picker';
 import DatePicker, { getFormatedDate } from "react-native-modern-datepicker";
 import { COLORS } from '../constants';
 import { FONTS } from '../constants';
-import { education } from '../constants/icons';
+
 
 
 
@@ -23,7 +23,7 @@ export default function OnlineDetailsScreen({ navigation }) {
   const [mobileNumber, setMobileNumber] = useState('');
   const [count, setCount] = useState('');
   //AMOUNT
-  
+  const [categoryAmount, setCategoryAmount] = useState({}); 
   const [visible, setVisible] = useState(false);
  //date of service
  const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
@@ -32,22 +32,22 @@ export default function OnlineDetailsScreen({ navigation }) {
    today.setDate(today.getDate() + 1),
    "YYYY/MM/DD"
  );
-
+ const [selectedStartDate, setSelectedStartDate] = useState("01/01/1990");
  const [startedDate, setStartedDate] = useState("12/12/2023");
-
  
  const handleChangeStartDate = (propDate) => {
   setStartedDate(propDate);
 };
-
-
 const handleOnPressStartDate = () => {
   setOpenStartDatePicker(!openStartDatePicker);
 };
 
+ 
+
+
   //SELECT TYPE CATEGORY
   const [selectedCategory, setSelectedCategory] = useState('');
-  const categories = ['HOMELESS-25', 'EGG&MILK', 'CHICKEN BIRIYANI', 'VEG BIRIYANI', 'ORPHANAGE', 'BLANKETS', 'DOGFOOD', 'TREE PLANTING','EDUCATION'];
+  const categories = ['HOMELESS-25', 'Egg & Milk', 'Birthday cake','Virtual Cake Cutting','Stray Dog','Grocery Kit','Chicken Biriyani', 'Child Education', 'Hospital Children', 'Blanket', 'Child Care Kit', 'Tree Planting','Gifts'];
   //navigate to preveiw screen
   
 
@@ -145,21 +145,22 @@ function renderDatePicker() {
             elevation: 5,
           }}
         >
-<DatePicker
-  mode="calendar"
-  minimumDate={startDate}
-  selected={getFormatedDate(startedDate, "YYYY/MM/DD")}
-  onDateChanged={handleChangeStartDate}
-  options={{
-    backgroundColor: COLORS.primary,
-    textHeaderColor: "#469ab6",
-    textDefaultColor: COLORS.white,
-    selectedTextColor: COLORS.white,
-    mainColor: "#469ab6",
-    textSecondaryColor: COLORS.white,
-    borderColor: "rgba(122,146,165,0.1)",
-  }}
-/>
+          <DatePicker
+            mode="calendar"
+            minimumDate={startDate}
+            selected={startedDate}
+            onDateChanged={handleChangeStartDate}
+            onSelectedChange={(date) => setSelectedStartDate(date)}
+            options={{
+              backgroundColor: COLORS.primary,
+              textHeaderColor: "#469ab6",
+              textDefaultColor: COLORS.white,
+              selectedTextColor: COLORS.white,
+              mainColor: "#469ab6",
+              textSecondaryColor: COLORS.white,
+              borderColor: "rgba(122,146,165,0.1)",
+            }}
+          />
 
           <TouchableOpacity onPress={handleOnPressStartDate}>
             <Text style={{ ...FONTS.body3, color: COLORS.white }}>Close</Text>
@@ -199,11 +200,10 @@ const handleImageUpload = async () => {
     console.error('Error selecting image:', error);
   }
 };
-
  // Function to create Razorpay order
  const createRazorpayOrder = async () => {
   try {
-    const response = await axios.post('https://d659-115-96-6-60.ngrok-free.app/create_razorpay_order/', { amount: enteredAmount }, { headers: { 'Content-Type': 'application/json' } });
+    const response = await axios.post('https://f02a-115-96-6-60.ngrok-free.app/create_razorpay_order/', { amount: enteredAmount }, { headers: { 'Content-Type': 'application/json' } });
     console.log(response.data);
      // Assuming the response contains the order ID and other necessary details
     const orderDetails = response.data;
@@ -216,8 +216,53 @@ const handleImageUpload = async () => {
  // Function to generate payment link
  
 const [enteredAmount, setEnteredAmount] = useState('');
-const handleAmountChange = (text) => {
-  setEnteredAmount(text);
+const handleAmountChange = (category,enteredAmount) => {
+  let categoryAmount;
+  // Set specific amounts for each category
+  switch (category) {
+    case 'HOMELESS-25':
+      categoryAmount = 25;
+      break;
+    case 'Chicken Biriyani':
+      categoryAmount = 120;
+      break;
+    case 'Egg & Milk':
+      categoryAmount = 30;
+      break;
+    case 'stray Dog':
+      categoryAmount = 35;
+      break;
+    case 'Grocery Kit':
+      categoryAmount = 65;
+      break;
+      case 'Chicken Biriyani':
+      categoryAmount = 65;
+      break;
+      case 'Birthday cake':
+      categoryAmount = 65;
+      break;
+      case 'Child Education':
+      categoryAmount = 65;
+      break;
+      case 'Hospital Children':
+      categoryAmount = 65;
+      break;
+      case 'Blanket':
+      categoryAmount = 65;
+      break;
+      case 'Child care kit':
+      categoryAmount = 65;
+      break;
+    default:
+      categoryAmount = 0; // Set a default value if the category is not found
+      break;
+  }
+// Calculate the total amount based on count
+setEnteredAmount(String(categoryAmount));
+setCategoryAmount((prevState) => ({
+  ...prevState,
+  [category]: categoryAmount,
+}));
 };
 // Function to handle the "Create Order" button press
 const handleCreateOrder = async () => {
@@ -237,6 +282,7 @@ const handleCreateOrder = async () => {
       navigation.navigate('Payment', {
         orderId,
         qrCodeData,
+       
         
       });
       const newTransaction = {
@@ -247,19 +293,12 @@ const handleCreateOrder = async () => {
 
       setTransactions((prevTransactions) => [...prevTransactions, newTransaction]);
       console.log('Payment Link:', qrCodeData);
-    }
-    
-      
+    }   
   } catch (error) {
     console.error('Error creating Razorpay order:', error);
   }
     // Navigate to PaymentScreen and pass the necessary data
-navigation.navigate('Payment', {
-      orderId,
-      qrCodeData,
-      
-    });
-  
+    
 };
   // Define your payment data
   const handlePayment = async () => {
@@ -299,7 +338,6 @@ navigation.navigate('Payment', {
     razorpay_order_id: 'ORDER_ID',
     razorpay_signature: 'SIGNATURE',
   };
-
   const orderId = "id"; // Replace with your actual order ID
   const upiId = "kaleeshkumar1125180@okaxis"; // Replace with your actual UPI ID
   const recipientName = "Thaagamfoundation"; // Replace with the recipient's name
@@ -331,7 +369,7 @@ navigation.navigate('Payment', {
     title={"Details"}
     headerBg={"#000000"}
     iconColor={"white"}
-    menu //or back
+     back
     optionalBadge={7}
     navigation={navigation} 
     right="more-vertical"
@@ -397,12 +435,16 @@ navigation.navigate('Payment', {
               </View>
               <View style={styles.inputcategoryContainer}>
               <Picker
-                selectedValue={selectedCategory}
-                onValueChange={(itemValue) => setSelectedCategory(itemValue)}
-              >
-                <Picker.Item label="Select a category" value="" />
+              selectedValue={selectedCategory}
+              
+              onValueChange={(itemValue) => {
+                setSelectedCategory(itemValue);
+                // Update amount when category changes
+              }}
+            >
+                <Picker.Item label="Select a category" value="" color='blue'/>
                 {categories.map((category, index) => (
-                  <Picker.Item key={index} label={category} value={category} />
+                  <Picker.Item key={index} label={category} value={category} style={styles.inputcategoryContainerinside}/>
                 ))}
               </Picker>
               </View>
@@ -427,7 +469,7 @@ navigation.navigate('Payment', {
                 paddingLeft: 8,
               }}
             >
-                <Text>{startedDate}</Text>
+              <Text>{selectedStartDate}</Text>
             </TouchableOpacity>
   </View>
 </View>
@@ -447,21 +489,28 @@ navigation.navigate('Payment', {
               />
               </View>
             </View>
+            {selectedCategory === 'Birthday cake' && (
             <View style={styles.inputContainer}>
             <View style={styles.labelContainer}>
-            <Ionicons name="stats-chart" size={24} color={COLORS.primary}/>
-              <Text style={styles.label}>SPECIAL CATEGORY</Text>
+
+            <Ionicons name="pizza" size={24} color={COLORS.primary}/>
+            
+              <Text style={styles.label}>Cake Name</Text>
               </View>
               <View style={styles.inputFieldContainer}>
-              <TextInput
-                style={styles.input}
-                value={count}
-                onChangeText={text => setCount(text)}
-                keyboardType="numeric"
-                placeholder="Enter count"
-              />
+              {/* Render the input field only when the selected category is "Birthday cake" */}
+             
+                  <TextInput
+                    style={styles.input}
+                    value={count}
+                    onChangeText={(text) => setCount(text)}
+                    
+                    placeholder="Enter Cake Name"
+                  />
+              
               </View>
             </View>
+              )}
             <View style={styles.inputContainer}>
             <View style={styles.labelContainer}>
             <Ionicons name="cash" size={24} color={COLORS.primary} />
@@ -469,13 +518,12 @@ navigation.navigate('Payment', {
               </View>
               <View style={styles.inputFieldContainer}>
               <TextInput
-                style={styles.input}
-                value={enteredAmount}
-                onChangeText={handleAmountChange}
-               
-                keyboardType="numeric"
-                placeholder="Enter amount"
-              />
+  style={styles.input}
+  value={enteredAmount}
+  onChangeText={(text) => setEnteredAmount(text)}
+  keyboardType="numeric"
+  placeholder="Enter amount"
+/>
               </View>
             </View>
              
@@ -581,18 +629,26 @@ const styles = StyleSheet.create({
   inputcategoryContainer:{
    
     flex: 2,
+    borderColor: 'black',
     backgroundColor:'lightyellow',
     marginBottom: 10,
     borderRadius: 10,
+    borderWidth: 1,
     fontSize: 20,
     fontWeight: 'bold',
-
+  },
+  inputcategoryContainerinside:{
+    marginBottom: 0,
+    padding:5,
+    fontSize: 13,
+    fontWeight: 'bold',
+    
   },
   input: {
     padding: 1,
-    borderWidth: 2,
+    borderWidth: 1,
     fontSize:16,
-    borderColor: '#888',
+    borderColor: 'black',
     borderRadius: 10,
     color: 'blue',
     elevation: 5,

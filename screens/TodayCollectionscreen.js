@@ -62,10 +62,10 @@ const TodayCollectionscreen = () => {
   }, []);
   // Mock data for hourly collection with time labels
   const hourlyCollectionData = [
-    { time: '12: AM', value: 10 },
-    { time: '1: AM', value: 20 },
-    { time: '2: AM', value: 15 },
-    { time: '3:00 AM', value: 25 },
+    { time: '12AM', value: 10 },
+    { time: '1AM', value: 20 },
+    { time: '2AM', value: 15 },
+    { time: '3AM', value: 25 },
     { time: '4:00 AM', value: 30 },
     { time: '5:00 AM', value: 18 },
     { time: '6:00 AM', value: 22 },
@@ -116,7 +116,6 @@ const TodayCollectionscreen = () => {
       <View style={styles.chartContainer}>
     
         <Text style={styles.chartTitle}>Hourly Collection</Text>
-      
         <LineChart
           data={chartData}
           width={400} // Increase the width

@@ -272,6 +272,7 @@ const Profile = ({ navigation }) => {
                 color: COLORS.primary,
               }}
             >
+          
               Total collection
             </Text>
           </View>

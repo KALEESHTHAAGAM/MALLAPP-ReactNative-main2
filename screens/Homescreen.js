@@ -11,7 +11,7 @@ import LottieView from 'lottie-react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { useUser } from "../components/UserContext";
 import notification from './notification';
-import * as AuthSession from 'expo-auth-session';
+
 
 
 const { width } = Dimensions.get('window');
@@ -23,6 +23,58 @@ function Homescreen({ navigation }) {
   const [todayCollection, setTodayCollection] = useState();
   const [thisMonthCollection, setThisMonthCollection] = useState(null);
   const [apiError, setApiError] = useState(null);
+//api section
+useEffect(() => {
+  // Fetch Today Collection
+  fetch('https://f02a-115-96-6-60.ngrok-free.app/today_collection/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({}),
+  }) // Replace with your Django backend URL and endpoint
+    .then(response => response.json())
+    .then(data => {
+      console.log('Today Collection:', data.TodayCollection);
+      const todayCollectionData = data.TodayCollection;
+      setTodayCollection(todayCollectionData);
+      setApiError(null); // Reset API error state on success
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      setApiError(error.message); // Set API error state on failure 
+    });
+}, []);
+
+const categories = [
+  { id: 1, categoryType: 'type1', /* other category data */ },
+  { id: 2, categoryType: 'type2', /* other category data */ },
+  // Add more categories as needed
+];
+
+// Fetch ThisMonthCollection
+useEffect(() => {
+fetch('https://f02a-115-96-6-60.ngrok-free.app/ThisMonthCollection/', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({}),
+}) // Replace with your Django backend URL and endpoint
+  .then(response => response.json())
+  .then(data => {
+    console.log('ThisMonthCollection:', data.ThisMonthCollection);
+    const ThisMonthCollectionData = data.ThisMonthCollection;
+    setThisMonthCollection(ThisMonthCollectionData);
+    setApiError(null); // Reset API error state on success
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    setApiError(error.message); // Set API error state on failure 
+  });
+}, []);
+
+
  // const [loginTime, setLoginTime] = useState(null);
 
 
@@ -66,60 +118,10 @@ const loginDuration = calculateLoginDuration();*/
     console.log('Connection type', state.type);
     console.log('Is connected?', state.isConnected);
   });
-  //api section
-  useEffect(() => {
-    // Fetch Today Collection
-    fetch('https://d659-115-96-6-60.ngrok-free.app/today_collection/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({}),
-    }) // Replace with your Django backend URL and endpoint
-      .then(response => response.json())
-      .then(data => {
-        console.log('Today Collection:', data.TodayCollection);
-        const todayCollectionData = data.TodayCollection;
-        setTodayCollection(todayCollectionData);
-        setApiError(null); // Reset API error state on success
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        setApiError(error.message); // Set API error state on failure 
-      });
-  }, []);
-
-  const categories = [
-    { id: 1, categoryType: 'type1', /* other category data */ },
-    { id: 2, categoryType: 'type2', /* other category data */ },
-    // Add more categories as needed
-  ];
-
- 
- useEffect(() => {
-  // Fetch Today Collection
-  fetch('https://d659-115-96-6-60.ngrok-free.app/ThisMonthCollection/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({}),
-  }) // Replace with your Django backend URL and endpoint
-    .then(response => response.json())
-    .then(data => {
-      console.log('ThisMonthCollection:', data.ThisMonthCollection);
-      const ThisMonthCollectionData = data.ThisMonthCollection;
-      setThisMonthCollection(ThisMonthCollectionData);
-      setApiError(null); // Reset API error state on success
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      setApiError(error.message); // Set API error state on failure 
-    });
-}, []);
+ /* 
  // Fetch category data
  useEffect(() => {
-    fetch('http://127.0.0.1:8081/categories/')
+    fetch('https://f02a-115-96-6-60.ngrok-free.app/categories/')
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -129,6 +131,7 @@ const loginDuration = calculateLoginDuration();*/
       .then((data) => setCategories(data))
       .catch((error) => console.error('Error:', error));
  }, []);
+ */
 
   const carouselItems = [
     {
@@ -163,8 +166,6 @@ const loginDuration = calculateLoginDuration();*/
 
     );
   }
-
-
   const renderCategory = ({ item }) => {
     let cardStyle;
     switch (item.categoryType) {
@@ -201,13 +202,7 @@ const loginDuration = calculateLoginDuration();*/
       </Card>
     );
   };
-  function renderNotice() {
-    return (
-      <View>
-        <Text>xddx</Text>
-      </View>
-    )
-  }
+  
 
   const { userData, setUserData } = useUser();
   const IDCard = () => {
@@ -240,6 +235,7 @@ const loginDuration = calculateLoginDuration();*/
 
   return (
     <SafeAreaView >
+   
 
       <Appheader
         title={"HOME"}
@@ -314,9 +310,7 @@ const loginDuration = calculateLoginDuration();*/
           </View>
         )}
 
-        <View style={styles.lottie}>
-          <LottieView source={require('../assets/animations/animation1.json')} autoPlay loop />
-        </View>
+      
       </ScrollView>
       {/* Render Categories */}
 
@@ -476,7 +470,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'orange'
   },
   ScrollView: {
-    backgroundColor: 'lightyellow',
+    backgroundColor: 'skyblue',
 
   },
   idCard: {
